@@ -1,4 +1,6 @@
-FROM williamyeh/ansible:debian7-onbuild
+FROM williamyeh/ansible:alpine3
 
-ENV INVENTORY machines
-RUN ansible-playbook-wrapper -b -u issdm
+ADD . /app/
+ENV ANSIBLE_HOST_KEY_CHECKING False
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD [""]

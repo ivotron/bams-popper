@@ -1,0 +1,13 @@
+geog:
+   image: bigwxwrf/geog
+sandyinput:
+   image: bigwxwrf/sandy
+wrfsandy:
+   image: bigwxwrf/ncarwrf
+   volumes_from:
+    - geog
+    - sandyinput
+   volumes:
+    - ./wrfoutput:/wrfoutput
+   command:
+    - "/wrf/run-wrf-1cpu"

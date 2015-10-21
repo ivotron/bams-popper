@@ -13,11 +13,11 @@
 #    - INVENTORY:    inventory filename;    default = "/etc/ansible/hosts"
 #
 
+cd /app
+
 INVENTORY=machines
 
-#
 # install Galaxy roles, if any
-#
 if [ -z "$REQUIREMENTS" ]; then
     REQUIREMENTS=requirements.yml
 fi
@@ -26,16 +26,9 @@ if [ -f "$REQUIREMENTS" ]; then
     ansible-galaxy install -p roles/ -r $REQUIREMENTS
 fi
 
-
-#
 # execute playbook
-#
-
 if [ -z "$PLAYBOOK" ]; then
     PLAYBOOK=playbook.yml
 fi
 
-exec ansible-playbook        \
-   -i $INVENTORY  $PLAYBOOK  \
-   --connection=local        \
-   "$@"
+exec ansible-playbook -i $INVENTORY $PLAYBOOK "$@"
