@@ -1,0 +1,21 @@
+- hosts: all
+  roles:
+  - role: docker.ubuntu
+    docker_opts: "--host tcp://0.0.0.0:2375"
+  post_tasks:
+  - name: download docker-compose
+    get_url: url=https://github.com/docker/compose/releases/download/1.4.2/docker-compose-Linux-x86_64 dest=/usr/local/bin/docker-compose mode=0755
+  - name: create temp folder
+    file: path=/tmp/wrf state=directory mode=0755
+  - name: checkout compose files
+    get_url: url=https://gist.githubusercontent.com/ivotron/4e6f518117bd8319b2af/raw/5a02b9718b99086bb0bf9d5a20ad6e69ad360285/docker-compose.yml dest=/tmp/wrf/docker-compose.yml mode=0644
+  - name: execute wrf
+    command: docker-compose up chdir=/tmp/wrf
+  - name: list output files
+    shell: (cd /tmp/wrf/wrfoutput; find . -maxdepth 1 -type f) | cut -d'/' -f2
+    register: files_to_copy
+  - name: fetch results files to compare
+    fetch: src=/tmp/wrf/wrfoutput/{{ item }} dest=wrfoutput/{{ ansible_hostname }}/
+    with_items: files_to_copy.stdout_lines
+  - name: compare files to see if they are equal
+    local_action: command compare_results

@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+import itertools
+import os
+import filecmp
+
+machines = []
+
+for x in os.walk('wrfoutput/'):
+    machines.append(x[0])
+
+for combo in itertools.combinations(machines, 2):
+    for f in os.listdir(combo[0]):
+        f1 = '{}/{}'.format(combo[0], f)
+        f2 = '{}/{}'.format(combo[1], f)
+        if not filecmp.cmp(f1, f2):
+            raise Exception('Error: ' + f1 + ' not equal to ' + f2)
