@@ -28,7 +28,7 @@
 
 # What it does
 
-See the [playbook][playbook.yml]
+See the [playbook](playbook.yml)
 
 # Requirements:
 
