@@ -7,6 +7,10 @@
     file: path=/tmp/wrf state=directory mode=0755
   - name: transfer compose files
     copy: src=docker-compose.yml dest=/tmp/wrf/docker-compose.yml mode=0644
+  - name: pull wrf containers
+    shell: docker-compose pull chdir=/tmp/wrf
+    environment:
+      DOCKER_HOST: tcp://0.0.0.0:2375
   - name: remove stopped containers
     shell: docker-compose rm -f chdir=/tmp/wrf
     environment:
