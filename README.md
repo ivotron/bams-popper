@@ -13,7 +13,7 @@
   4. Execute the test
 
      ```bash
-     docker run --rm bams96
+     docker run --rm bams96 > wrf_time.log
      ```
 
      or if other ansible-specific flags need to be passed:
@@ -23,7 +23,7 @@
        -v ~/.ssh/id_rsa:/root/.ssh/id_rsa \
        -v `pwd`/output:/tmp/wrf/wrfoutput \
        bams96
-         -u $USER -b
+         -u $USER -b > wrf_time.log
      ```
 
 # What it does
