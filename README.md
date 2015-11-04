@@ -23,7 +23,7 @@
        -v ~/.ssh/id_rsa:/root/.ssh/id_rsa \
        -v `pwd`/output:/tmp/wrf/wrfoutput \
        bams96
-         -u $USER -b > wrf_time.log
+         -u $USER -b --extra-vars='{"threads": [1,2,4,8,16]}' > wrf_time.log
      ```
 
 # What it does

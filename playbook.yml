@@ -1,6 +1,7 @@
 - hosts: all
   vars:
     threads: [1]
+    install_docker: no
   pre_tasks:
   - name: ensure expected variables are defined
     assert:
@@ -9,7 +10,7 @@
       - "ansible_lsb.major_release|int >= 12"
   roles:
   - role: angstwad.docker_ubuntu
-    docker_opts: "--host tcp://0.0.0.0:2375"
+    when: install_docker|bool
   tasks:
   - name: create temp folder
     file: path=/tmp/wrf state=directory mode=0755
@@ -18,19 +19,18 @@
     with_items: threads
   - name: transfer compose files
     copy: src=docker-compose.yml dest=/tmp/wrf/docker-compose.yml mode=0644
+  - name: link docker-compose in all folders
+    command: ln -s ../../docker-compose.yml . chdir=/tmp/wrf/output/{{ item }}
+    with_items: threads
   - name: pull wrf containers
     shell: docker-compose pull chdir=/tmp/wrf
     environment:
       DOCKER_HOST: tcp://0.0.0.0:2375
   - name: remove stopped containers
     shell: docker-compose rm -f chdir=/tmp/wrf
-    environment:
-      DOCKER_HOST: tcp://0.0.0.0:2375
   - name: execute wrf
-    shell: THREADS={{ item }} docker-compose -f ../../docker-compose.yml up chdir=/tmp/wrf/output/{{ item }}
+    shell: THREADS={{ item }} docker-compose up chdir=/tmp/wrf/output/{{ item }}
     with_items: threads
-    environment:
-      DOCKER_HOST: tcp://0.0.0.0:2375
   - name: fetch result files to compare
     synchronize: mode=pull src=/tmp/wrf/output/ dest=wrfoutput/{{ inventory_hostname }}
   - name: compare files to see if they are equal

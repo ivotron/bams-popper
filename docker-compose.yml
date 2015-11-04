@@ -3,9 +3,10 @@ geog:
 sandyinput:
    image: bigwxwrf/sandy
 wrfsandy:
-   image: ivotron/ncarwrf
+   image: bigwxwrf/ncarwrf
    volumes_from:
    - geog
    - sandyinput
+   command: "/wrf/run-wrf-${THREADS}cpu"
    volumes:
    - ./wrfoutput:/wrfoutput
