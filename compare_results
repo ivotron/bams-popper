@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import filecmp
+import itertools
 
 machines = os.listdir('wrfoutput/')
 
@@ -12,16 +13,27 @@ if len(machines) == 1:
     print("Only 1 output folder found")
     exit()
 
-first_machine = machines[0]
-files = os.listdir('wrfoutput/' + first_machine)
+for pair in itertools.combinations(machines, 2):
+    # every pairwise combination
 
-if len(files) != 13:
-    print("Expecting 13 files, found " + str(len(files)))
-    exit()
+    for thrds in [2**i for i in range(0, 5)]:
+        # threads from 1-num_threads where num_threads is first arg to script
 
-for machine in machines[1:]:
-    for f in files:
-        f1 = 'wrfoutput/{}/{}'.format(first_machine, f)
-        f2 = 'wrfoutput/{}/{}'.format(machine, f)
-        if not filecmp.cmp(f1, f2):
-            raise Exception('Error: ' + f1 + ' not equal to ' + f2)
+        if not os.path.isdir('wrfoutput/' + pair[0] + '/' + thrds):
+            print('No output for ' + pair[0] + ' with ' + thrds + 'threads')
+            continue
+        if not os.path.isdir('wrfoutput/' + pair[1] + '/' + thrds):
+            print('No output for ' + pair[1] + ' with ' + thrds + 'threads')
+            continue
+
+        files = os.listdir('wrfoutput/' + pair[0] + '/' + thrds + '/wrfoutput')
+
+        if len(files) != 13:
+            print("Expecting 13 files, found " + str(len(files)))
+            exit()
+
+        for f in files:
+            f1 = 'wrfoutput/{}/{}/{}'.format(pair[0], thrds, f)
+            f2 = 'wrfoutput/{}/{}/{}'.format(pair[1], thrds, f)
+            if not filecmp.cmp(f1, f2):
+                raise Exception('Error: ' + f1 + ' not equal to ' + f2)

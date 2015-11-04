@@ -1,10 +1,21 @@
 - hosts: all
+  vars:
+    threads: [1]
+  pre_tasks:
+  - name: ensure expected variables are defined
+    assert:
+      that:
+      - "ansible_distribution == 'Ubuntu'"
+      - "ansible_lsb.major_release|int >= 12"
   roles:
   - role: angstwad.docker_ubuntu
     docker_opts: "--host tcp://0.0.0.0:2375"
   tasks:
   - name: create temp folder
     file: path=/tmp/wrf state=directory mode=0755
+  - name: create output folders
+    file: path=/tmp/wrf/output/{{ item }} state=directory mode=0755
+    with_items: threads
   - name: transfer compose files
     copy: src=docker-compose.yml dest=/tmp/wrf/docker-compose.yml mode=0644
   - name: pull wrf containers
@@ -16,14 +27,11 @@
     environment:
       DOCKER_HOST: tcp://0.0.0.0:2375
   - name: execute wrf
-    shell: docker-compose up chdir=/tmp/wrf
+    shell: THREADS={{ item }} docker-compose -f ../../docker-compose.yml up chdir=/tmp/wrf/output/{{ item }}
+    with_items: threads
     environment:
       DOCKER_HOST: tcp://0.0.0.0:2375
-  - name: list output files
-    shell: ls /tmp/wrf/wrfoutput
-    register: files_to_copy
-  - name: fetch results files to compare
-    fetch: src=/tmp/wrf/wrfoutput/{{ item }} dest=wrfoutput/{{ inventory_hostname }}/ flat=yes
-    with_items: files_to_copy.stdout_lines
+  - name: fetch result files to compare
+    synchronize: mode=pull src=/tmp/wrf/output/ dest=wrfoutput/{{ inventory_hostname }}
   - name: compare files to see if they are equal
     local_action: command ./compare_results
