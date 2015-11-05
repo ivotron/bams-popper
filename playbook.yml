@@ -3,7 +3,7 @@
     threads: [1]
     install_docker: no
   pre_tasks:
-  - name: ensure expected variables are defined
+  - name: check ubuntu version
     assert:
       that:
       - "ansible_distribution == 'Ubuntu'"
@@ -12,6 +12,8 @@
   - role: angstwad.docker_ubuntu
     when: install_docker|bool
   tasks:
+  - name: remove temp folder in case it was previously there
+    file: path=/tmp/wrf state=absent
   - name: create temp folder
     file: path=/tmp/wrf state=directory mode=0755
   - name: create output folders
@@ -23,13 +25,13 @@
     command: ln -s ../../docker-compose.yml . chdir=/tmp/wrf/output/{{ item }}
     with_items: threads
   - name: pull wrf containers
-    shell: docker-compose pull chdir=/tmp/wrf
-    environment:
-      DOCKER_HOST: tcp://0.0.0.0:2375
+    command: docker-compose pull chdir=/tmp/wrf
   - name: remove stopped containers
-    shell: docker-compose rm -f chdir=/tmp/wrf
+    command: docker-compose rm -f chdir=/tmp/wrf
   - name: execute wrf
-    shell: THREADS={{ item }} docker-compose up chdir=/tmp/wrf/output/{{ item }}
+    shell: docker-compose up chdir=/tmp/wrf/output/{{ item }}
+    environment:
+      THREADS: "{{ item }}"
     with_items: threads
   - name: fetch result files to compare
     synchronize: mode=pull src=/tmp/wrf/output/ dest=wrfoutput/{{ inventory_hostname }}
