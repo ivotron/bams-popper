@@ -19,21 +19,21 @@ for pair in itertools.combinations(machines, 2):
     for thrds in [2**i for i in range(0, 5)]:
         # threads from 1-num_threads where num_threads is first arg to script
 
-        if not os.path.isdir('wrfoutput/' + pair[0] + '/' + thrds):
-            print('No output for ' + pair[0] + ' with ' + thrds + 'threads')
+        if not os.path.isdir('wrfoutput/' + pair[0] + '/' + str(thrds)):
+            print('No output for ' + pair[0] + ' with ' + str(thrds) + 'threads')
             continue
-        if not os.path.isdir('wrfoutput/' + pair[1] + '/' + thrds):
-            print('No output for ' + pair[1] + ' with ' + thrds + 'threads')
+        if not os.path.isdir('wrfoutput/' + pair[1] + '/' + str(thrds)):
+            print('No output for ' + pair[1] + ' with ' + str(thrds) + 'threads')
             continue
 
-        files = os.listdir('wrfoutput/' + pair[0] + '/' + thrds + '/wrfoutput')
+        files = os.listdir('wrfoutput/' + pair[0] + '/' + str(thrds) + '/wrfoutput')
 
         if len(files) != 13:
             print("Expecting 13 files, found " + str(len(files)))
             exit()
 
         for f in files:
-            f1 = 'wrfoutput/{}/{}/{}'.format(pair[0], thrds, f)
-            f2 = 'wrfoutput/{}/{}/{}'.format(pair[1], thrds, f)
+            f1 = 'wrfoutput/{}/{}/wrfoutput/{}'.format(pair[0], str(thrds), f)
+            f2 = 'wrfoutput/{}/{}/wrfoutput/{}'.format(pair[1], str(thrds), f)
             if not filecmp.cmp(f1, f2):
                 raise Exception('Error: ' + f1 + ' not equal to ' + f2)
