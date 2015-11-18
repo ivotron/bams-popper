@@ -2,12 +2,14 @@
   vars:
     threads: [1]
     install_docker: no
+    check_system: yes
   pre_tasks:
   - name: check ubuntu version
     assert:
       that:
       - "ansible_distribution == 'Ubuntu'"
       - "ansible_lsb.major_release|int >= 12"
+    when: check_system
   roles:
   - role: angstwad.docker_ubuntu
     when: install_docker|bool
