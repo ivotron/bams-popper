@@ -31,4 +31,4 @@ if [ -z "$PLAYBOOK" ]; then
     PLAYBOOK=playbook.yml
 fi
 
-exec ansible-playbook -i $INVENTORY $PLAYBOOK "$@"
+exec ansible-playbook -i $INVENTORY $PLAYBOOK $@
