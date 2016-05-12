@@ -1,0 +1,55 @@
+  - name: check assumptions
+    assert:
+      that:
+      - 'threads is defined'
+      - 'data_containers is defined'
+      - 'remove_data_containers is defined'
+      - 'wrf_timing is defined'
+      - 'docker_flags is defined'
+
+  - name: check docker
+    package:
+      name: docker-engine
+      state: present
+
+  - name: remove temp folder in case it was previously there
+    file:
+      path: /tmp/wrf
+      state: absent
+
+  - name: create output folders
+    file:
+      path: /tmp/wrf/output/{{ item }}
+      state: directory
+      mode: 0755
+    with_items: '{{ threads }}'
+
+  - name: pull images
+    command: docker pull {{ item }}
+    with_items: '{{ data_containers + ["ivotron/ncarwrf"] }}'
+
+  - name: remove previous containers
+    command: docker rm -f {{ item.replace("/", ".") }}
+    ignore_errors: true
+    with_items: '{{ data_containers + ["ivotron/ncarwrf"] }}'
+    when: item not in data_containers or (remove_data_containers | bool )
+
+  - name: execute data containers
+    shell: docker run -d --name {{ item.replace("/", ".") }} {{ item }}
+    with_items: '{{ data_containers }}'
+    when: '{{ remove_data_containers | bool }}'
+
+  - name: execute WRF container
+    shell: >
+        docker run --rm \
+          -e THREADS={{ threads }} \
+          --volumes-from={{ data_containers | join(" --volumes-from=") | replace("/", ".") }} \
+          {{ docker_flags }} \
+          ivotron/ncarwrf
+    register: wrf_exec
+
+  - name: register timing result
+    set_fact:
+      wrf_timing: |
+       {{ wrf_timing }}
+       {{ ansible_hostname }},{{ threads }},{{wrf_exec.delta}},{{ wrf_exec_tag }},{{wrf_exec.stdout}}

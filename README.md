@@ -1,36 +1,33 @@
-# bams96
+# BAMS
 
-  1. Clone this repo.
+## Build the paper
 
-  2. Edit the `machines` file to add hosts where the tests will run.
+To generate a PDF, clone this repo and then:
 
-  3. Build the image
+```
+cd bams-popper/paper
+./build
+```
 
-     ```bash
-     docker build -t bams96 .
-     ```
+## Experiments
 
-  4. Execute the test
+To re-run an experiment, clone this repo and then
 
-     ```bash
-     docker run --rm bams96 > wrf_time.log
-     ```
+ 1. `cd` into an experiment (e.g. 
+    [this](experiments/performance_reproducibility)).
 
-     or if other ansible-specific flags need to be passed:
+ 2. Edit the `machines` file to add hosts where the experiment will 
+    run.
 
-     ```bash
-     docker run \
-       -v ~/.ssh/id_rsa:/root/.ssh/id_rsa \
-       -v `pwd`/output:/tmp/wrf/wrfoutput \
-       bams96
-         -u $USER -b --extra-vars='{"threads": [1,2,4,8,16]}' > wrf_time.log
-     ```
+ 3. Execute `./run.sh`
 
-# What it does
+### What an experiment does
 
-See the [playbook](playbook.yml)
+To see what an experiment does, take a look at one of the playbooks, 
+e.g. [this](experiments/numeric_reproducibility/playbook.yml)
 
-# Requirements:
+## Requirements:
 
-  * docker 1.7+ on local host
-  * ubuntu 12.04+ on remote machines
+  * ansible 2.0+ on localhost
+  * docker 1.7+ on remote machines
+  * docker 1.7+ on localhost for generating the PDF

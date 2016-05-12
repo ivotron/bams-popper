@@ -1,0 +1,22 @@
+- hosts: all
+  vars:
+    threads: [1]
+    data_containers:
+    - bigwxwrf/geog
+    - bigwxwrf/sandy
+    pull_results: false
+    docker_flags: '-v /tmp/wrf/output/:/wrfoutput/ '
+
+  tasks:
+
+  - name: run wrf
+    include: ../common/run_wrf.yml
+
+  - name: fetch result files to compare
+    synchronize:
+      mode: pull
+      src: /tmp/wrf/output/
+      dest: wrfoutput/{{ inventory_hostname }}
+
+  - name: compare files to see if they are equal
+    local_action: command ./compare_results

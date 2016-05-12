@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Build the paper
+docker run --rm -v `pwd`/:/mnt \
+  ivotron/texlive:latest sh -c \
+    "cd /mnt ; pdflatex paper && bibtex paper && pdflatex paper && pdflatex paper" &> build.log
+
+if [ $? != "0" ] ; then
+  echo "ERROR"
+  cat build.log
+  exit 1
+fi
+
+echo "SUCCESS"
+
+exit 0
