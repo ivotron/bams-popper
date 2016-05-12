@@ -21,6 +21,7 @@
         --cpu-quota {{ cpu_quota[inventory_hostname] }}
         --cpu-period {{ cpu_quota[inventory_hostname] }}'
       wrf_exec_tag: 'cpu_limits'
+    when: inventory_hostname in groups.targets
 
   - name: run wrf with limits
     include: ../common/run_wrf.yml num_threads={{item}}

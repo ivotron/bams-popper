@@ -43,6 +43,10 @@
     with_items: '{{ data_containers }}'
     when: '{{ remove_data_containers | bool }}'
 
+  - name: add docker_flags to ansible log
+    debug:
+      var: docker_flags
+
   - name: execute WRF container
     shell: >
       docker run --rm \
