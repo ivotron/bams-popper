@@ -4,7 +4,7 @@
       - 'num_threads is defined'
       - 'data_containers is defined'
       - 'remove_data_containers is defined'
-      - 'docker_flags is defined'
+      - 'flags_for_docker is defined'
 
   - name: initialize wrf_timing if not set
     set_fact:
@@ -43,16 +43,16 @@
     with_items: '{{ data_containers }}'
     when: '{{ remove_data_containers | bool }}'
 
-  - name: add docker_flags to ansible log
+  - name: add flags_for_docker to ansible log
     debug:
-      var: docker_flags
+      var: flags_for_docker
 
   - name: execute WRF container
     shell: >
       docker run --rm \
         -e THREADS={{ num_threads }} \
         --volumes-from={{ data_containers | join(" --volumes-from=") | replace("/", ".") }} \
-        {{ docker_flags }} \
+        {{ flags_for_docker }} \
         ivotron/ncarwrf
     register: wrf_exec
 

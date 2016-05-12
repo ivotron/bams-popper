@@ -3,28 +3,24 @@
   - name: check for variables
     assert:
       that:
-      - 'cpu_quota is defined'
-      - 'cpu_period is defined'
+      - 'host_docker_flags is defined'
       - 'threads is defined'
 
   - name: tag results accordingly
     set_fact:
-      wrf_exec_tag: 'no_limits'
+      wrf_exec_tag: 'no'
 
   - name: run wrf without limits
-    include: ../common/run_wrf.yml num_threads={{item}}
+    include: ../common/run_wrf.yml num_threads={{item}} flags_for_docker={{docker_flags}}
     with_items: '{{ threads }}'
 
   - name: set docker flags for limits and tag results accordingly
     set_fact:
-      docker_flags: '{{ docker_flags }}
-        --cpu-quota {{ cpu_quota[inventory_hostname] }}
-        --cpu-period {{ cpu_quota[inventory_hostname] }}'
-      wrf_exec_tag: 'cpu_limits'
+      wrf_exec_tag: 'yes'
     when: inventory_hostname in groups.targets
 
   - name: run wrf with limits
-    include: ../common/run_wrf.yml num_threads={{item}}
+    include: ../common/run_wrf.yml num_threads={{item}} flags_for_docker='{{docker_flags}} {{ host_docker_flags[inventory_hostname] }}'
     with_items: '{{ threads }}'
     when: inventory_hostname in groups.targets
 
