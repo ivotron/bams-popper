@@ -3,19 +3,7 @@ threads: [1]
 data_containers:
 - bigwxwrf/geog
 - bigwxwrf/sandy
-remove_data_containers: true
-cpu_quota:
-  'piha.soe.ucsc.edu': 1
-  '192.168.140.82': 7111
-  '192.168.140.86': 6352
-  'clnode056.clemson.cloudlab.us': 7009
-  'dwill.soe.ucsc.edu': 5465
-  'nibbler.soe.ucsc.edu': 7116
-cpu_period:
-  'piha.soe.ucsc.edu': 1
-  '192.168.140.82': 10000
-  '192.168.140.86': 10000
-  'clnode056.clemson.cloudlab.us': 10000
-  'dwill.soe.ucsc.edu': 10000
-  'nibbler.soe.ucsc.edu': 10000
+remove_data_containers: false
 docker_flags: '--tmpfs /wrfoutput:rw,noexec,nosuid,size=4g'
+host_docker_flags:
+  'nibbler.soe.ucsc.edu': '--cpu-quota=7116 --cpu-period=10000'

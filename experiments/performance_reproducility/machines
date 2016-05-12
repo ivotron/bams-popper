@@ -3,4 +3,3 @@ issdm-17 ansible_ssh_user=issdm
 
 [targets]
 nibbler.soe.ucsc.edu
-dwill.soe.ucsc.edu
