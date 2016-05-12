@@ -7,26 +7,31 @@
       - 'cpu_period is defined'
       - 'threads is defined'
 
-  - name: initialize wrf_timing if not set
-    set_fact:
-      wrf_timing: ''
-    when: wrf_timing is not defined
-
   - name: tag results accordingly
     set_fact:
       wrf_exec_tag: 'no_limits'
 
   - name: run wrf without limits
-    include: ../common/run_wrf.yml threads={{item}}
+    include: ../common/run_wrf.yml num_threads={{item}}
     with_items: '{{ threads }}'
 
   - name: set docker flags for limits and tag results accordingly
     set_fact:
+      docker_flags: '{{ docker_flags }}
+        --cpu-quota {{ cpu_quota[inventory_hostname] }}
+        --cpu-period {{ cpu_quota[inventory_hostname] }}'
       wrf_exec_tag: 'cpu_limits'
 
   - name: run wrf with limits
-    include: ../common/run_wrf.yml threads={{item}}
+    include: ../common/run_wrf.yml num_threads={{item}}
     with_items: '{{ threads }}'
+    when: inventory_hostname in groups.targets
+
+  - name: clear previous results
+    local_action: shell echo 'host,threads,time,limits' > ./results
+    run_once: true
 
   - name: store results
-    local_action: copy content={{ wrf_timing }} dest=./results
+    local_action: lineinfile dest=./results insertafter=EOF line='{{ hostvars[item]["wrf_timing"] }}'
+    with_items: '{{ groups.base + groups.targets }}'
+    run_once: true
