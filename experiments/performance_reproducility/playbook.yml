@@ -5,10 +5,12 @@
       that:
       - 'host_docker_flags is defined'
       - 'threads is defined'
+      - 'groups.base is defined'
+      - 'groups.targets is defined'
 
   - name: tag results accordingly
     set_fact:
-      wrf_exec_tag: 'no'
+      wrf_exec_tag: 'no_limits'
 
   - name: run wrf without limits
     include: ../common/run_wrf.yml num_threads={{item}} flags_for_docker={{docker_flags}}
@@ -16,7 +18,7 @@
 
   - name: set docker flags for limits and tag results accordingly
     set_fact:
-      wrf_exec_tag: 'yes'
+      wrf_exec_tag: 'with_limits'
     when: inventory_hostname in groups.targets
 
   - name: run wrf with limits
@@ -29,6 +31,11 @@
     run_once: true
 
   - name: store results
-    local_action: lineinfile dest=./results insertafter=EOF line='{{ hostvars[item]["wrf_timing"] }}'
-    with_items: '{{ groups.base + groups.targets }}'
+    local_action:
+      module: lineinfile
+      dest: ./results
+      insertafter: EOF
+      line: '{{ hostvars[item]["wrf_timing"] }}'
+    with_items: '{{ groups.all }}'
     run_once: true
+    when: 'item != "localhost"'
