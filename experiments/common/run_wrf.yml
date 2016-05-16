@@ -59,7 +59,8 @@
         --volumes-from={{ data_containers | join(" --volumes-from=") | replace("/", ".") }} \
         {{ flags_for_docker }} \
         ivotron/ncarwrf
-      chdir: /tmp/wrf/output/{{ num_threads }}
+    args:
+      chdir: '/tmp/wrf/output/{{ num_threads }}'
     register: wrf_exec
 
   - name: write timing result
