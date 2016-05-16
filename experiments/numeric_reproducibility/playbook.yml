@@ -1,22 +1,28 @@
 - hosts: all
-  vars:
-    threads: [1]
-    data_containers:
-    - bigwxwrf/geog
-    - bigwxwrf/sandy
-    pull_results: false
-    docker_flags: '-v /tmp/wrf/output/:/wrfoutput/ '
-
   tasks:
+  - name: check for variables
+    assert:
+      that: 'threads is defined'
 
   - name: run wrf
-    include: ../common/run_wrf.yml
+    include: ../common/run_wrf.yml num_threads={{item}} flags_for_docker='-v `pwd`:/wrfoutput'
+    with_items: '{{ threads }}'
+
+  - name: create output folder in localhost
+    local_action:
+      module: file
+      path: ./wrfoutput
+      state: directory
+      mode: 0755
+    run_once: true
 
   - name: fetch result files to compare
     synchronize:
       mode: pull
       src: /tmp/wrf/output/
-      dest: wrfoutput/{{ inventory_hostname }}
+      dest: ./wrfoutput/{{ inventory_hostname }}
+      flat: true
 
   - name: compare files to see if they are equal
     local_action: command ./compare_results
+    run_once: true

@@ -11,6 +11,11 @@
       wrf_timing: ''
     when: wrf_timing is not defined
 
+  - name: initialize wrf_exec_tag if not set
+    set_fact:
+      wrf_exec_tag: ''
+    when: wrf_exec_tag is not defined
+
   - name: check docker
     package:
       name: docker-engine
@@ -18,15 +23,15 @@
 
   - name: remove temp folder in case it was previously there
     file:
-      path: /tmp/wrf
+      path: /tmp/wrf/output/{{ num_threads }}
       state: absent
+    ignore_errors: true
 
-  - name: create output folders
+  - name: create output folder
     file:
-      path: /tmp/wrf/output/{{ item }}
+      path: /tmp/wrf/output/{{ num_threads }}
       state: directory
       mode: 0755
-    with_items: '{{ num_threads }}'
 
   - name: pull images
     command: docker pull {{ item }}
@@ -54,6 +59,7 @@
         --volumes-from={{ data_containers | join(" --volumes-from=") | replace("/", ".") }} \
         {{ flags_for_docker }} \
         ivotron/ncarwrf
+      chdir: /tmp/wrf/output/{{ num_threads }}
     register: wrf_exec
 
   - name: write timing result
