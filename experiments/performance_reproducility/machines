@@ -1,5 +1,10 @@
 [base]
-issdm-17 ansible_ssh_user=issdm
+issdm-6 ansible_ssh_user=issdm
 
 [targets]
+147.75.201.115 ansible_ssh_user=root
 nibbler.soe.ucsc.edu
+dwill.soe.ucsc.edu
+192.168.140.84 ansible_ssh_user=issdm
+192.168.140.86 ansible_ssh_user=issdm
+pc-c220m4-r04-02.wisc.cloudlab.us ansible_ssh_user=ivotron

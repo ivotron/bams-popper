@@ -3,7 +3,12 @@ threads: [1]
 data_containers:
 - bigwxwrf/geog
 - bigwxwrf/sandy
-remove_data_containers: false
-docker_flags: '--tmpfs /wrfoutput:rw,noexec,nosuid,size=4g'
+remove_data_containers: true
+docker_flags: '--tmpfs /wrfoutput:rw,noexec,nosuid,size=500m'
 host_docker_flags:
-  'nibbler.soe.ucsc.edu': '--cpu-quota=7116 --cpu-period=10000'
+  'nibbler.soe.ucsc.edu': '--cpu-quota=6291 --cpu-period=10000'
+  'dwill.soe.ucsc.edu': '--cpu-quota=3812 --cpu-period=10000'
+  '192.168.140.84': '--cpu-quota=6263 --cpu-period=10000'
+  '192.168.140.86': '--cpu-quota=4794 --cpu-period=10000'
+  'pc-c220m4-r04-02.wisc.cloudlab.us': '--cpu-quota=5596 --cpu-period=10000'
+  '147.75.201.115': '--cpu-quota=99000 --cpu-period=100000'
