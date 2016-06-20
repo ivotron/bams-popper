@@ -67,7 +67,7 @@
     set_fact:
       wrf_timing: |-
        {{ wrf_timing }}
-       {{ ansible_hostname }},{{ num_threads }},{{ wrf_exec.delta }},{{ wrf_exec_tag }}
+       {{ ansible_hostname }},{{ ansible_processor[1] }},{{ num_threads }},{{ wrf_exec.delta }},{{ wrf_exec_tag }}
 
   - name: add wrf stdout to ansible log
     debug:

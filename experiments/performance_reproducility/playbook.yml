@@ -27,7 +27,7 @@
     when: inventory_hostname in groups.targets
 
   - name: clear previous results
-    local_action: shell echo 'host,threads,time,limits' > ./results
+    local_action: shell echo 'host,cpu,threads,time,limits' > ./results
     run_once: true
 
   - name: store results
@@ -42,6 +42,6 @@
 
   - name: produce table with results
     local_action: 'shell
-      docker run -v "`pwd`:/home/jovyan/work" jupyter/scipy-notebook
+      docker run --rm -v "`pwd`:/home/jovyan/work" jupyter/scipy-notebook
           jupyter nbconvert --stdout --execute visualize.ipynb > /dev/null'
     run_once: true
