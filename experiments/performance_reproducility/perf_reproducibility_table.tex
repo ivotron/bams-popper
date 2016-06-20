@@ -1,1 +1,19 @@
-\setlength{\tabcolsep}{0.5em} {\renewcommand{\arraystretch}{1.2}\begin{tabular}{lrrl} \toprule       host &  threads &         time &       limits \\ \midrule    issdm-6 &        1 &  1251.697012 &    no\_limits \\    packet0 &        1 &  1173.848259 &    no\_limits \\    packet0 &        1 &  1265.819255 &  with\_limits \\    nibbler &        1 &   571.163721 &    no\_limits \\    nibbler &        1 &  1425.671584 &  with\_limits \\      dwill &        1 &   442.803647 &    no\_limits \\      dwill &        1 &  1244.367972 &  with\_limits \\  rackform4 &        1 &   689.738835 &    no\_limits \\  rackform4 &        1 &  1560.987534 &  with\_limits \\        pl2 &        1 &   425.031332 &    no\_limits \\        pl2 &        1 &  1431.383836 &  with\_limits \\       node &        1 &   396.553413 &    no\_limits \\       node &        1 &  1564.413064 &  with\_limits \\ \bottomrule \end{tabular} }
+\begin{tabular}{lrrlr}
+\toprule
+Machine ID &               CPU &      Runtime & CPU limits &  Normalized \\
+\midrule
+   issdm-6 &  AMD Opteron 2212 &  1251.697012 &         No &    1.000000 \\
+   packet0 &  Intel Atom C2550 &  1173.848259 &         No &    1.066319 \\
+   packet0 &                   &  1265.819255 &        Yes &    0.988843 \\
+   nibbler &      Intel i7 930 &   571.163721 &         No &    2.191485 \\
+   nibbler &                   &  1425.671584 &        Yes &    0.877970 \\
+     dwill &     Intel i5 2400 &   442.803647 &         No &    2.826754 \\
+     dwill &                   &  1244.367972 &        Yes &    1.005890 \\
+ rackform4 &  AMD Opteron 6320 &   689.738835 &         No &    1.814741 \\
+ rackform4 &                   &  1560.987534 &        Yes &    0.801862 \\
+       pl2 &  Intel E5-2630 V2 &   425.031332 &         No &    2.944952 \\
+       pl2 &                   &  1431.383836 &        Yes &    0.874466 \\
+      node &  Intel E5-2630 V3 &   396.553413 &         No &    3.156440 \\
+      node &                   &  1564.413064 &        Yes &    0.800106 \\
+\bottomrule
+\end{tabular}

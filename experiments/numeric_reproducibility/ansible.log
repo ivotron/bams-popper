@@ -1,0 +1,6 @@
+
+2016-05-16 04:01:53,605 p=18925 u=ivo |  PLAY ***************************************************************************
+2016-05-16 04:01:53,641 p=18925 u=ivo |  TASK [setup] *******************************************************************
+2016-05-16 04:01:53,721 p=18925 u=ivo |  fatal: [147.75.201.115]: UNREACHABLE! => {"changed": false, "msg": "SSH encountered an unknown error during the connection. We recommend you re-run the command using -vvvv, which will enable SSH debugging output to help diagnose the issue", "unreachable": true}
+2016-05-16 04:01:53,722 p=18925 u=ivo |  PLAY RECAP *********************************************************************
+2016-05-16 04:01:53,722 p=18925 u=ivo |  147.75.201.115             : ok=0    changed=0    unreachable=1    failed=0   
